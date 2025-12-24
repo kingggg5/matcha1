@@ -97,10 +97,24 @@ class Order
         $order->customerPhone = $doc['customerPhone'] ?? '';
         $order->customerEmail = $doc['customerEmail'] ?? '';
         $order->note = $doc['note'] ?? '';
-        $order->createdAt = $doc['createdAt'] ?? date('Y-m-d H:i:s');
-        $order->updatedAt = $doc['updatedAt'] ?? date('Y-m-d H:i:s');
-        $order->paidAt = $doc['paidAt'] ?? '';
+        $order->createdAt = self::convertDate($doc['createdAt'] ?? null);
+        $order->updatedAt = self::convertDate($doc['updatedAt'] ?? null);
+        $order->paidAt = self::convertDate($doc['paidAt'] ?? null, true);
         return $order;
+    }
+
+    private static function convertDate($date, bool $allowEmpty = false): string
+    {
+        if ($date === null || $date === '') {
+            return $allowEmpty ? '' : date('Y-m-d H:i:s');
+        }
+        if ($date instanceof \MongoDB\BSON\UTCDateTime) {
+            return $date->toDateTime()->format('Y-m-d H:i:s');
+        }
+        if (is_string($date)) {
+            return $date;
+        }
+        return $allowEmpty ? '' : date('Y-m-d H:i:s');
     }
 
     public function toPublicArray(): array

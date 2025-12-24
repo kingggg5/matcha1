@@ -47,8 +47,22 @@ class User
             $doc['role'] ?? 'user',
             (string) $doc['_id']
         );
-        $user->createdAt = $doc['createdAt'] ?? date('Y-m-d H:i:s');
+        $user->createdAt = self::convertDate($doc['createdAt'] ?? null);
         return $user;
+    }
+
+    private static function convertDate($date): string
+    {
+        if ($date === null) {
+            return date('Y-m-d H:i:s');
+        }
+        if ($date instanceof \MongoDB\BSON\UTCDateTime) {
+            return $date->toDateTime()->format('Y-m-d H:i:s');
+        }
+        if (is_string($date)) {
+            return $date;
+        }
+        return date('Y-m-d H:i:s');
     }
 
     public function toPublicArray(): array
