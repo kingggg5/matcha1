@@ -4,8 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ef3539caf1584dbaad35d2e6015d6b6a",
-    "packages": [
+    "content-hash": "bf5f7e01f69853096fd8937a62efcfed",
+    "packages": [],
+    "packages-dev": [
         {
             "name": "mongodb/mongodb",
             "version": "1.20.0",
@@ -298,7 +299,6 @@
             "time": "2024-09-09T11:45:10+00:00"
         }
     ],
-    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {},
