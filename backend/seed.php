@@ -42,7 +42,7 @@ $existingAdmin = Database::findOne('users', ['email' => 'admin@matchaking.com'])
 if (!$existingAdmin) {
     Database::insertOne('users', [
         'name' => 'Admin',
-        'email' => 'admin@matchaking.com',
+        'email' => 'admin@g.com',
         'password' => password_hash('admin123', PASSWORD_BCRYPT),
         'role' => 'admin',
         'createdAt' => date('Y-m-d H:i:s')

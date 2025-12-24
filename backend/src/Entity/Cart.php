@@ -37,10 +37,10 @@ class Cart
             $items = (array) $items;
         }
         // Convert stdClass items to arrays
-        $items = array_map(function($item) {
+        $items = array_map(function ($item) {
             return is_object($item) ? (array) $item : $item;
         }, $items);
-        
+
         $cart = new self(
             $doc['userId'],
             array_values($items),
@@ -50,16 +50,20 @@ class Cart
         return $cart;
     }
 
-    public function addItem(string $productId, int $quantity, string $variant = ''): void
+    public function addItem(string $productId, int $quantity, mixed $variant = ''): void
     {
+        // Normalize variant for comparison
+        $variantKey = $this->getVariantKey($variant);
+
         foreach ($this->items as &$item) {
-            if ($item['productId'] === $productId && ($item['variant'] ?? '') === $variant) {
+            $itemVariantKey = $this->getVariantKey($item['variant'] ?? '');
+            if ($item['productId'] === $productId && $itemVariantKey === $variantKey) {
                 $item['quantity'] += $quantity;
                 $this->updatedAt = date('Y-m-d H:i:s');
                 return;
             }
         }
-        
+
         $this->items[] = [
             'id' => bin2hex(random_bytes(8)),
             'productId' => $productId,
@@ -67,6 +71,17 @@ class Cart
             'variant' => $variant
         ];
         $this->updatedAt = date('Y-m-d H:i:s');
+    }
+
+    private function getVariantKey(mixed $variant): string
+    {
+        if (is_array($variant) && isset($variant['name'])) {
+            return $variant['name'];
+        }
+        if (is_object($variant) && isset($variant->name)) {
+            return $variant->name;
+        }
+        return (string) $variant;
     }
 
     public function updateItem(string $itemId, int $quantity): bool

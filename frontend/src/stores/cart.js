@@ -72,11 +72,18 @@ export const useCartStore = defineStore('cart', () => {
     async function addItem(product, quantity = 1, variant = null) {
         const authStore = useAuthStore()
 
+        console.log('addItem called:', { product, quantity, variant })
+        console.log('product.id:', product?.id)
+        console.log('isAuthenticated:', authStore.isAuthenticated)
+
         // Get variant name for comparison
         const variantName = variant && typeof variant === 'object' ? variant.name : variant
 
         if (!authStore.isAuthenticated) {
             // Handle local cart for guests
+            console.log('Adding to local cart...')
+            console.log('Current items:', items.value)
+
             const existingIndex = items.value.findIndex(item => {
                 const itemVariantName = item.variant && typeof item.variant === 'object'
                     ? item.variant.name
@@ -86,16 +93,20 @@ export const useCartStore = defineStore('cart', () => {
 
             if (existingIndex !== -1) {
                 items.value[existingIndex].quantity += quantity
+                console.log('Updated existing item quantity')
             } else {
-                items.value.push({
+                const newItem = {
                     id: Date.now().toString(),
                     productId: product.id,
                     quantity,
                     variant,
                     product
-                })
+                }
+                items.value.push(newItem)
+                console.log('Added new item:', newItem)
             }
             saveLocalCart()
+            console.log('Cart after add:', items.value)
             return { success: true }
         }
 
