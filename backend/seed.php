@@ -91,7 +91,7 @@ $productData = [
             ['name' => '500g', 'price' => 4790]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1582793988951-9aed5509eb97?w=600&h=600&fit=crop&q=90'
     ],
     [
         'name' => 'MATCHAKING CLASSIC',
@@ -104,16 +104,16 @@ $productData = [
             ['name' => '500g', 'price' => 2500]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=600&h=600&fit=crop&q=90'
     ],
     [
-        'name' => 'MATCHAKING CLASSIC (POWDER) 1KG',
+        'name' => 'MATCHAKING POWDER 1KG',
         'description' => 'มัทฉะผงขนาด 1 กิโลกรัม เหมาะสำหรับร้านกาแฟ ร้านเบเกอรี่ หรือผู้ที่ต้องการใช้ปริมาณมาก',
         'price' => 4190,
         'categoryId' => $categoryIds['powder'] ?? '',
         'variants' => [],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1582793988951-9aed5509eb97?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&h=600&fit=crop&q=90'
     ],
     [
         'name' => 'Organic Ceremonial Matcha',
@@ -126,7 +126,7 @@ $productData = [
             ['name' => '200g', 'price' => 3890]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1563822249366-3efb23b8e0c9?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&h=600&fit=crop&q=90'
     ],
     [
         'name' => 'Matcha Latte Mix',
@@ -138,16 +138,16 @@ $productData = [
             ['name' => '15 ซอง', 'price' => 520]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?w=600&h=600&fit=crop&q=90'
     ],
     [
-        'name' => 'Culinary Grade Matcha 500g',
+        'name' => 'Culinary Grade Matcha',
         'description' => 'มัทฉะเกรดทำขนม เหมาะสำหรับทำเค้ก คุกกี้ ไอศกรีม และขนมหวานต่างๆ',
         'price' => 890,
         'categoryId' => $categoryIds['powder'] ?? '',
         'variants' => [],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1563822249366-3efb23b8e0c9?w=600&h=600&fit=crop&q=90'
     ],
     [
         'name' => 'Matcha Starter Kit',
@@ -159,10 +159,10 @@ $productData = [
             ['name' => 'Premium Set', 'price' => 2490]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1556679343-c1306c46e7d1?w=600&h=600&fit=crop&q=90'
     ],
     [
-        'name' => 'Matcha Cold Brew Bottle',
+        'name' => 'Matcha Cold Brew',
         'description' => 'มัทฉะสำหรับชงเย็น พร้อมขวดแก้วพิเศษสำหรับชงชาเย็น',
         'price' => 690,
         'categoryId' => $categoryIds['classic'] ?? '',
@@ -171,7 +171,7 @@ $productData = [
             ['name' => 'แพ็ค 3 ขวด', 'price' => 1890]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1556679343-c1917e48a5a6?w=400&h=400&fit=crop'
+        'image' => 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=600&h=600&fit=crop&q=90'
     ]
 ];
 
