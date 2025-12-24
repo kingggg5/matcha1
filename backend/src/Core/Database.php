@@ -33,7 +33,7 @@ class Database
     public static function find(string $collection, array $filter = [], array $options = []): array
     {
         $manager = self::getManager();
-        
+
         // Convert string IDs to ObjectId in filter
         if (isset($filter['_id']) && is_string($filter['_id'])) {
             try {
@@ -68,21 +68,21 @@ class Database
     {
         $manager = self::getManager();
         $bulk = new BulkWrite();
-        
+
         // Generate new ObjectId
         $id = new ObjectId();
         $document['_id'] = $id;
-        
+
         $bulk->insert($document);
         $manager->executeBulkWrite(self::$dbName . '.' . $collection, $bulk);
-        
+
         return (string) $id;
     }
 
     public static function updateOne(string $collection, array $filter, array $update): int
     {
         $manager = self::getManager();
-        
+
         // Convert string ID to ObjectId in filter
         if (isset($filter['_id']) && is_string($filter['_id'])) {
             try {
@@ -95,14 +95,14 @@ class Database
         $bulk = new BulkWrite();
         $bulk->update($filter, ['$set' => $update], ['multi' => false]);
         $result = $manager->executeBulkWrite(self::$dbName . '.' . $collection, $bulk);
-        
+
         return $result->getModifiedCount();
     }
 
     public static function deleteOne(string $collection, array $filter): int
     {
         $manager = self::getManager();
-        
+
         // Convert string ID to ObjectId in filter
         if (isset($filter['_id']) && is_string($filter['_id'])) {
             try {
@@ -115,7 +115,18 @@ class Database
         $bulk = new BulkWrite();
         $bulk->delete($filter, ['limit' => 1]);
         $result = $manager->executeBulkWrite(self::$dbName . '.' . $collection, $bulk);
-        
+
+        return $result->getDeletedCount();
+    }
+
+    public static function deleteMany(string $collection, array $filter): int
+    {
+        $manager = self::getManager();
+
+        $bulk = new BulkWrite();
+        $bulk->delete($filter, ['limit' => 0]); // limit 0 = delete all matching
+        $result = $manager->executeBulkWrite(self::$dbName . '.' . $collection, $bulk);
+
         return $result->getDeletedCount();
     }
 

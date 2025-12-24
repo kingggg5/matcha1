@@ -25,15 +25,15 @@
         </div>
         <div class="hero-image animate-fade-in">
           <div class="hero-image-glow"></div>
-          <div class="hero-product-showcase">
-            <span class="showcase-icon">🍵</span>
+          <div class="hero-product-showcase floating">
+            <img src="https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=600&h=600&fit=crop" alt="Premium Matcha" class="hero-matcha-img" />
           </div>
         </div>
       </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features py-3xl">
+    <section class="features py-2xl">
       <div class="container">
         <div class="features-grid grid grid-4">
           <div class="feature-card card card-glass">
@@ -61,7 +61,7 @@
     </section>
 
     <!-- Featured Products -->
-    <section id="featured" class="featured-section py-3xl">
+    <section id="featured" class="featured-section py-2xl">
       <div class="container">
         <div class="section-header text-center mb-xl">
           <span class="section-badge">Best Sellers</span>
@@ -94,7 +94,7 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section py-3xl">
+    <section class="cta-section py-2xl">
       <div class="container">
         <div class="cta-card card">
           <div class="cta-content">
@@ -219,6 +219,26 @@ onMounted(() => {
 
 .showcase-icon {
   font-size: 8rem;
+}
+
+.hero-matcha-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 30px rgba(45, 90, 39, 0.4));
+}
+
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(2deg);
+  }
+}
+
+.floating {
+  animation: floating 6s ease-in-out infinite;
 }
 
 /* Features */

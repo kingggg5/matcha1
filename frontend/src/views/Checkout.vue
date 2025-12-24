@@ -83,7 +83,15 @@
             </div>
             <div class="form-group">
               <label class="form-label">เบอร์โทรศัพท์</label>
-              <input type="tel" v-model="form.customerPhone" class="form-input" required />
+              <input 
+                type="tel" 
+                v-model="form.customerPhone" 
+                class="form-input" 
+                pattern="[0-9]*"
+                inputmode="numeric"
+                @input="form.customerPhone = form.customerPhone.replace(/[^0-9]/g, '')"
+                required 
+              />
             </div>
             <div class="form-group">
               <label class="form-label">ที่อยู่จัดส่ง</label>
@@ -290,14 +298,19 @@ onMounted(() => {
   min-height: 100vh;
 }
 
+.checkout-summary,
+.checkout-payment {
+  padding: var(--space-xl);
+}
+
 .page-title {
   font-size: var(--font-size-3xl);
 }
 
 .checkout-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
+  grid-template-columns: 1fr 1.2fr;
+  gap: var(--space-2xl); /* Increased from space-xl */
   align-items: start;
 }
 
@@ -396,13 +409,14 @@ onMounted(() => {
 .qr-box {
   width: 200px;
   height: 200px;
-  background: white;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .qr-icon {

@@ -147,8 +147,10 @@ function handleLogout() {
 }
 
 .sidebar-link.active {
-  background: var(--color-primary);
-  color: white;
+  background: rgba(45, 90, 39, 0.2);
+  color: var(--color-accent);
+  border-left: 4px solid var(--color-primary);
+  box-shadow: inset 10px 0 20px rgba(45, 90, 39, 0.1);
 }
 
 .link-icon {

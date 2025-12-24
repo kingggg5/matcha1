@@ -4,6 +4,7 @@
 
     <!-- Stats Grid -->
     <div class="stats-grid grid grid-4 mb-2xl">
+      <!-- Revenue -->
       <div class="stat-card card">
         <div class="stat-icon">💰</div>
         <div class="stat-info">
@@ -12,6 +13,7 @@
         </div>
       </div>
       
+      <!-- Orders -->
       <div class="stat-card card">
         <div class="stat-icon">📦</div>
         <div class="stat-info">
@@ -20,6 +22,7 @@
         </div>
       </div>
       
+      <!-- Pending -->
       <div class="stat-card card">
         <div class="stat-icon">⏳</div>
         <div class="stat-info">
@@ -28,6 +31,7 @@
         </div>
       </div>
       
+      <!-- Paid -->
       <div class="stat-card card">
         <div class="stat-icon">✅</div>
         <div class="stat-info">
@@ -35,10 +39,8 @@
           <span class="stat-label">ชำระแล้ว</span>
         </div>
       </div>
-    </div>
 
-    <!-- Product Stats -->
-    <div class="stats-grid grid grid-3 mb-2xl">
+      <!-- Products -->
       <div class="stat-card card">
         <div class="stat-icon">🍵</div>
         <div class="stat-info">
@@ -47,6 +49,7 @@
         </div>
       </div>
       
+      <!-- Categories -->
       <div class="stat-card card">
         <div class="stat-icon">📁</div>
         <div class="stat-info">
@@ -55,6 +58,7 @@
         </div>
       </div>
 
+      <!-- Sold Items -->
       <div class="stat-card card">
         <div class="stat-icon">🛒</div>
         <div class="stat-info">
@@ -65,7 +69,7 @@
     </div>
 
     <!-- Top Products -->
-    <div v-if="stats.productSales && stats.productSales.length > 0" class="section mb-2xl">
+    <div v-if="stats.productSales && stats.productSales.length > 0" class="section mb-2xl mt-3xl">
       <h2 class="section-title mb-lg">🏆 สินค้าขายดี</h2>
       <div class="card">
         <table class="data-table">
@@ -88,7 +92,7 @@
     </div>
 
     <!-- Daily Sales -->
-    <div v-if="stats.dailySales && stats.dailySales.length > 0" class="section mb-2xl">
+    <div v-if="stats.dailySales && stats.dailySales.length > 0" class="section mb-2xl mt-3xl">
       <h2 class="section-title mb-lg">📈 ยอดขายรายวัน</h2>
       <div class="card">
         <table class="data-table">
@@ -189,6 +193,7 @@ onMounted(async () => {
 
 .section-title {
   font-size: var(--font-size-xl);
+  margin-top: var(--space-xl);
 }
 
 .stat-card {
@@ -206,18 +211,29 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   background: var(--bg-glass);
-  border-radius: var(--radius-md);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.stat-card:hover .stat-icon {
+  border-color: var(--color-primary);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-glow);
 }
 
 .stat-value {
   display: block;
   font-size: var(--font-size-2xl);
   font-weight: 700;
+  letter-spacing: -1px;
 }
 
 .stat-label {
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
+  white-space: nowrap;
 }
 
 .text-warning {
@@ -240,6 +256,10 @@ onMounted(async () => {
   font-weight: 600;
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
+}
+
+.stats-grid {
+  gap: var(--space-xl);
 }
 
 .action-card {
@@ -268,10 +288,12 @@ onMounted(async () => {
 @media (max-width: 1024px) {
   .stats-grid.grid-4 {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl);
   }
   
   .actions-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl);
   }
 }
 </style>

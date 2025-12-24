@@ -8,15 +8,15 @@
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
     $baseDir = __DIR__ . '/src/';
-    
+
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
         return;
     }
-    
+
     $relativeClass = substr($class, $len);
     $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
-    
+
     if (file_exists($file)) {
         require $file;
     }
@@ -32,18 +32,22 @@ Database::init($config['database']['mongodb']['uri'], $config['database']['mongo
 
 echo "🌱 Seeding database...\n\n";
 
+// Clear existing products first
+echo "🗑️  Clearing existing products...\n";
+Database::deleteMany('products', []);
+
 // Create admin user
-$existingAdmin = Database::findOne('users', ['email' => 'admin@matchazuki.com']);
+$existingAdmin = Database::findOne('users', ['email' => 'admin@matchaking.com']);
 
 if (!$existingAdmin) {
     Database::insertOne('users', [
         'name' => 'Admin',
-        'email' => 'admin@matchazuki.com',
+        'email' => 'admin@matchaking.com',
         'password' => password_hash('admin123', PASSWORD_BCRYPT),
         'role' => 'admin',
         'createdAt' => date('Y-m-d H:i:s')
     ]);
-    echo "✅ Created admin user: admin@matchazuki.com / admin123\n";
+    echo "✅ Created admin user: admin@matchaking.com / admin123\n";
 } else {
     echo "ℹ️  Admin user already exists\n";
 }
@@ -74,33 +78,38 @@ foreach ($categoryData as $cat) {
     }
 }
 
-// Create products
+// Create products with proper variant pricing
 $productData = [
     [
-        'name' => 'MATCHAZUKI EXCELLENT',
+        'name' => 'MATCHAKING EXCELLENT',
         'description' => 'มัทฉะเกรดพรีเมียมคุณภาพสูงสุด นำเข้าจากเมืองอุจิ ประเทศญี่ปุ่น เหมาะสำหรับชงดื่มโดยตรง รสชาติกลมกล่อม หอมละมุน',
         'price' => 525,
-        'priceMax' => 4790,
         'categoryId' => $categoryIds['premium'] ?? '',
-        'variants' => ['Classic 40g', 'Excellent 100g', 'Excellent 500g'],
+        'variants' => [
+            ['name' => '40g', 'price' => 525],
+            ['name' => '100g', 'price' => 1190],
+            ['name' => '500g', 'price' => 4790]
+        ],
         'inStock' => true,
         'image' => 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&h=400&fit=crop'
     ],
     [
-        'name' => 'MATCHAZUKI CLASSIC',
+        'name' => 'MATCHAKING CLASSIC',
         'description' => 'มัทฉะเกรดคลาสสิก คุณภาพดีเยี่ยม เหมาะสำหรับทำเครื่องดื่มมัทฉะลาเต้ ขนมหวาน และเบเกอรี่',
         'price' => 350,
-        'priceMax' => 2500,
         'categoryId' => $categoryIds['classic'] ?? '',
-        'variants' => ['Classic 100g', 'Classic 40g', 'Classic 500g'],
-        'inStock' => false,
+        'variants' => [
+            ['name' => '40g', 'price' => 350],
+            ['name' => '100g', 'price' => 790],
+            ['name' => '500g', 'price' => 2500]
+        ],
+        'inStock' => true,
         'image' => 'https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?w=400&h=400&fit=crop'
     ],
     [
-        'name' => 'MATCHAZUKI CLASSIC (POWDER) 1KG',
+        'name' => 'MATCHAKING CLASSIC (POWDER) 1KG',
         'description' => 'มัทฉะผงขนาด 1 กิโลกรัม เหมาะสำหรับร้านกาแฟ ร้านเบเกอรี่ หรือผู้ที่ต้องการใช้ปริมาณมาก',
         'price' => 4190,
-        'priceMax' => 4190,
         'categoryId' => $categoryIds['powder'] ?? '',
         'variants' => [],
         'inStock' => true,
@@ -109,10 +118,13 @@ $productData = [
     [
         'name' => 'Organic Ceremonial Matcha',
         'description' => 'มัทฉะออร์แกนิคเกรดพิธีชงชา ผ่านการรับรองมาตรฐาน JAS Organic จากประเทศญี่ปุ่น',
-        'price' => 1290,
-        'priceMax' => 3890,
+        'price' => 890,
         'categoryId' => $categoryIds['premium'] ?? '',
-        'variants' => ['30g', '80g', '200g'],
+        'variants' => [
+            ['name' => '30g', 'price' => 890],
+            ['name' => '80g', 'price' => 1890],
+            ['name' => '200g', 'price' => 3890]
+        ],
         'inStock' => true,
         'image' => 'https://images.unsplash.com/photo-1563822249366-3efb23b8e0c9?w=400&h=400&fit=crop'
     ],
@@ -120,9 +132,11 @@ $productData = [
         'name' => 'Matcha Latte Mix',
         'description' => 'มัทฉะลาเต้พร้อมชง ผสมนมผงและน้ำตาล เพียงเติมน้ำร้อนก็พร้อมดื่ม',
         'price' => 189,
-        'priceMax' => 520,
         'categoryId' => $categoryIds['classic'] ?? '',
-        'variants' => ['5 ซอง', '15 ซอง'],
+        'variants' => [
+            ['name' => '5 ซอง', 'price' => 189],
+            ['name' => '15 ซอง', 'price' => 520]
+        ],
         'inStock' => true,
         'image' => 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&h=400&fit=crop'
     ],
@@ -130,33 +144,58 @@ $productData = [
         'name' => 'Culinary Grade Matcha 500g',
         'description' => 'มัทฉะเกรดทำขนม เหมาะสำหรับทำเค้ก คุกกี้ ไอศกรีม และขนมหวานต่างๆ',
         'price' => 890,
-        'priceMax' => 890,
         'categoryId' => $categoryIds['powder'] ?? '',
         'variants' => [],
         'inStock' => true,
         'image' => 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=400&fit=crop'
+    ],
+    [
+        'name' => 'Matcha Starter Kit',
+        'description' => 'ชุดเริ่มต้นมัทฉะ พร้อมผงมัทฉะ ช้อนตักไม้ไผ่ และแก้วชงชา',
+        'price' => 1590,
+        'categoryId' => $categoryIds['premium'] ?? '',
+        'variants' => [
+            ['name' => 'Classic Set', 'price' => 1590],
+            ['name' => 'Premium Set', 'price' => 2490]
+        ],
+        'inStock' => true,
+        'image' => 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=400&h=400&fit=crop'
+    ],
+    [
+        'name' => 'Matcha Cold Brew Bottle',
+        'description' => 'มัทฉะสำหรับชงเย็น พร้อมขวดแก้วพิเศษสำหรับชงชาเย็น',
+        'price' => 690,
+        'categoryId' => $categoryIds['classic'] ?? '',
+        'variants' => [
+            ['name' => 'ขวดเดี่ยว', 'price' => 690],
+            ['name' => 'แพ็ค 3 ขวด', 'price' => 1890]
+        ],
+        'inStock' => true,
+        'image' => 'https://images.unsplash.com/photo-1556679343-c1917e48a5a6?w=400&h=400&fit=crop'
     ]
 ];
 
 foreach ($productData as $prod) {
-    $existing = Database::findOne('products', ['name' => $prod['name']]);
-    if (!$existing) {
-        Database::insertOne('products', [
-            'name' => $prod['name'],
-            'description' => $prod['description'],
-            'price' => $prod['price'],
-            'priceMax' => $prod['priceMax'],
-            'categoryId' => $prod['categoryId'],
-            'variants' => $prod['variants'],
-            'inStock' => $prod['inStock'],
-            'image' => $prod['image'],
-            'createdAt' => date('Y-m-d H:i:s'),
-            'updatedAt' => date('Y-m-d H:i:s')
-        ]);
-        echo "✅ Created product: {$prod['name']}\n";
-    } else {
-        echo "ℹ️  Product exists: {$prod['name']}\n";
-    }
+    // Calculate priceMax from variants
+    $prices = array_map(function ($v) use ($prod) {
+        return isset($v['price']) ? $v['price'] : $prod['price'];
+    }, $prod['variants']);
+
+    $priceMax = count($prices) > 0 ? max($prices) : $prod['price'];
+
+    Database::insertOne('products', [
+        'name' => $prod['name'],
+        'description' => $prod['description'],
+        'price' => $prod['price'],
+        'priceMax' => $priceMax,
+        'categoryId' => $prod['categoryId'],
+        'variants' => $prod['variants'],
+        'inStock' => $prod['inStock'],
+        'image' => $prod['image'],
+        'createdAt' => date('Y-m-d H:i:s'),
+        'updatedAt' => date('Y-m-d H:i:s')
+    ]);
+    echo "✅ Created product: {$prod['name']}\n";
 }
 
 // Create sample coupons
@@ -212,10 +251,9 @@ foreach ($couponData as $coupon) {
 
 echo "\n🎉 Seeding completed!\n";
 echo "\n📝 Admin Login:\n";
-echo "   Email: admin@matchazuki.com\n";
+echo "   Email: admin@matchaking.com\n";
 echo "   Password: admin123\n";
 echo "\n🎟️ Sample Coupons:\n";
 echo "   MATCHA10 - ลด 10%\n";
 echo "   NEWUSER50 - ลด ฿50\n";
 echo "   FREESHIP - ลด ฿100\n";
-

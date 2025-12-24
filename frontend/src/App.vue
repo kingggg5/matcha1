@@ -14,6 +14,7 @@
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
+import { useCartStore } from './stores/cart'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 import AdminSidebar from './components/AdminSidebar.vue'
@@ -21,11 +22,13 @@ import Toast from './components/Toast.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 
 onMounted(() => {
   authStore.initAuth()
+  cartStore.fetchCart()
 })
 </script>
 

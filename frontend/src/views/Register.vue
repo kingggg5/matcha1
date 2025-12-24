@@ -5,7 +5,7 @@
         <div class="auth-header text-center">
           <router-link to="/" class="auth-logo">
             <span class="logo-icon">🍵</span>
-            <span class="logo-text">MATCHAZUKI</span>
+            <span class="logo-text">MATCHAKING</span>
           </router-link>
           <h1 class="auth-title">สมัครสมาชิก</h1>
           <p class="auth-subtitle text-secondary">สร้างบัญชีเพื่อเริ่มช้อปปิ้ง</p>

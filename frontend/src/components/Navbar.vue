@@ -4,7 +4,7 @@
       <!-- Logo -->
       <router-link to="/" class="navbar-logo">
         <span class="logo-icon">🍵</span>
-        <span class="logo-text">MATCHA<span class="text-accent">ZUKI</span></span>
+        <span class="logo-text">MATCHA<span class="text-accent">KING</span></span>
       </router-link>
 
       <!-- Navigation Links -->
@@ -279,8 +279,12 @@ onUnmounted(() => {
 }
 
 .user-info {
-  padding: var(--space-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
   border-bottom: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .user-name {
@@ -297,19 +301,32 @@ onUnmounted(() => {
 
 .dropdown-item {
   width: 100%;
-  padding: var(--space-md);
-  text-align: left;
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
   color: var(--text-secondary);
   transition: all var(--transition-fast);
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
 }
 
 .dropdown-item:hover {
   background: var(--bg-glass);
   color: var(--text-primary);
+  padding-left: calc(var(--space-lg) + 4px);
 }
 
 .logout-btn {
-  color: #f87171;
+  color: #f87171 !important;
+  margin-top: var(--space-xs);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-md);
+}
+
+.logout-btn:hover {
+  background: rgba(248, 113, 113, 0.1);
 }
 
 .menu-toggle {

@@ -20,10 +20,10 @@
       <div v-if="product.variants && product.variants.length > 0" class="product-card-variants">
         <span 
           v-for="variant in product.variants.slice(0, 3)" 
-          :key="variant"
+          :key="getVariantKey(variant)"
           class="product-card-variant"
         >
-          {{ variant }}
+          {{ getVariantName(variant) }}
         </span>
         <span v-if="product.variants.length > 3" class="product-card-variant">
           +{{ product.variants.length - 3 }}
@@ -32,11 +32,11 @@
 
       <div class="product-card-footer">
         <div class="product-card-price">
-          <template v-if="product.priceMax && product.priceMax !== product.price">
-            <span class="price-range">฿{{ formatPrice(product.price) }} - {{ formatPrice(product.priceMax) }}</span>
+          <template v-if="priceRange.max && priceRange.max !== priceRange.min">
+            <span class="price-range">฿{{ formatPrice(priceRange.min) }} - {{ formatPrice(priceRange.max) }}</span>
           </template>
           <template v-else>
-            ฿{{ formatPrice(product.price) }}
+            ฿{{ formatPrice(priceRange.min) }}
           </template>
         </div>
         
@@ -83,6 +83,24 @@ const loading = ref(false)
 const productId = computed(() => props.product.id || props.product._id)
 const isInWishlist = computed(() => wishlistStore.isInWishlist(productId.value))
 
+// Calculate price range from variants
+const priceRange = computed(() => {
+  const variants = props.product.variants || []
+  if (variants.length === 0) {
+    return { min: props.product.price, max: props.product.price }
+  }
+  
+  const prices = variants.map(v => {
+    if (typeof v === 'object' && v.price) return v.price
+    return props.product.price
+  })
+  
+  return {
+    min: Math.min(...prices),
+    max: Math.max(...prices)
+  }
+})
+
 const imageUrl = computed(() => {
   if (props.product.image) {
     if (props.product.image.startsWith('http')) {
@@ -97,17 +115,47 @@ function formatPrice(price) {
   return new Intl.NumberFormat('th-TH').format(price)
 }
 
+function getVariantName(variant) {
+  if (typeof variant === 'object' && variant.name) {
+    return variant.name
+  }
+  return variant
+}
+
+function getVariantKey(variant) {
+  if (typeof variant === 'object' && variant.name) {
+    return variant.name
+  }
+  return variant
+}
+
 async function handleAddToCart() {
   if (!props.product.inStock) return
   
-  loading.value = true
-  const result = await cartStore.addItem({ ...props.product, id: productId.value }, 1)
-  loading.value = false
-  
-  if (result.success) {
-    toastStore.success(`เพิ่ม ${props.product.name} ลงตะกร้าแล้ว`)
+  // If product has variants, redirect to detail page to select
+  if (props.product.variants && props.product.variants.length > 0) {
+    // Use the first variant
+    const firstVariant = props.product.variants[0]
+    loading.value = true
+    const result = await cartStore.addItem({ ...props.product, id: productId.value }, 1, firstVariant)
+    loading.value = false
+    
+    if (result.success) {
+      const variantName = typeof firstVariant === 'object' ? firstVariant.name : firstVariant
+      toastStore.success(`เพิ่ม ${props.product.name} (${variantName}) ลงตะกร้าแล้ว`)
+    } else {
+      toastStore.error(result.error || 'ไม่สามารถเพิ่มสินค้าได้')
+    }
   } else {
-    toastStore.error(result.error || 'ไม่สามารถเพิ่มสินค้าได้')
+    loading.value = true
+    const result = await cartStore.addItem({ ...props.product, id: productId.value }, 1)
+    loading.value = false
+    
+    if (result.success) {
+      toastStore.success(`เพิ่ม ${props.product.name} ลงตะกร้าแล้ว`)
+    } else {
+      toastStore.error(result.error || 'ไม่สามารถเพิ่มสินค้าได้')
+    }
   }
 }
 

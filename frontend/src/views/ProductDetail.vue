@@ -32,12 +32,8 @@
             <h1 class="product-title">{{ product.name }}</h1>
             
             <div class="product-price">
-              <template v-if="product.priceMax && product.priceMax !== product.price">
-                ฿{{ formatPrice(product.price) }} - {{ formatPrice(product.priceMax) }}
-              </template>
-              <template v-else>
-                ฿{{ formatPrice(product.price) }}
-              </template>
+              ฿{{ formatPrice(currentPrice) }}
+              <span v-if="selectedVariantObj" class="variant-name-badge">{{ selectedVariantObj.name }}</span>
             </div>
 
             <div class="product-stock" :class="product.inStock ? 'in-stock' : 'out-of-stock'">
@@ -47,17 +43,18 @@
             <p class="product-description">{{ product.description }}</p>
 
             <!-- Variants -->
-            <div v-if="product.variants && product.variants.length > 0" class="product-variants">
+            <div v-if="normalizedVariants.length > 0" class="product-variants">
               <label class="variant-label">เลือกขนาด:</label>
               <div class="variant-options">
                 <button 
-                  v-for="variant in product.variants" 
-                  :key="variant"
+                  v-for="variant in normalizedVariants" 
+                  :key="variant.name"
                   class="variant-btn"
-                  :class="{ active: selectedVariant === variant }"
-                  @click="selectedVariant = variant"
+                  :class="{ active: selectedVariantIndex === normalizedVariants.indexOf(variant) }"
+                  @click="selectVariant(variant)"
                 >
-                  {{ variant }}
+                  <span class="variant-name">{{ variant.name }}</span>
+                  <span class="variant-price">฿{{ formatPrice(variant.price) }}</span>
                 </button>
               </div>
             </div>
@@ -104,12 +101,46 @@ const cartStore = useCartStore()
 const toastStore = useToastStore()
 
 const quantity = ref(1)
-const selectedVariant = ref('')
+const selectedVariantIndex = ref(0)
 const addingToCart = ref(false)
 
+// Define product first since other computed properties depend on it
 const product = computed(() => productStore.product)
 const loading = computed(() => productStore.loading)
 const error = computed(() => productStore.error)
+
+// Normalize variants to always be objects with name and price
+const normalizedVariants = computed(() => {
+  if (!product.value?.variants || !Array.isArray(product.value.variants)) return []
+  return product.value.variants.map(v => {
+    if (typeof v === 'string') {
+      return { name: v, price: product.value.price }
+    }
+    if (v && typeof v === 'object') {
+      return { name: v.name || '', price: v.price || product.value.price }
+    }
+    return { name: '', price: product.value.price }
+  }).filter(v => v.name)
+})
+
+const selectedVariantObj = computed(() => {
+  if (normalizedVariants.value.length === 0) return null
+  return normalizedVariants.value[selectedVariantIndex.value] || normalizedVariants.value[0]
+})
+
+const currentPrice = computed(() => {
+  if (selectedVariantObj.value) {
+    return selectedVariantObj.value.price
+  }
+  return product.value?.price || 0
+})
+
+function selectVariant(variant) {
+  const index = normalizedVariants.value.findIndex(v => v.name === variant.name)
+  if (index >= 0) {
+    selectedVariantIndex.value = index
+  }
+}
 
 const categoryName = computed(() => {
   if (!product.value?.categoryId) return 'มัทฉะ'
@@ -135,11 +166,17 @@ async function handleAddToCart() {
   if (!product.value?.inStock) return
   
   addingToCart.value = true
-  const result = await cartStore.addItem(product.value, quantity.value, selectedVariant.value)
+  // Ensure product has id field (support both id and _id from MongoDB)
+  const productWithId = {
+    ...product.value,
+    id: product.value.id || product.value._id
+  }
+  const result = await cartStore.addItem(productWithId, quantity.value, selectedVariantObj.value)
   addingToCart.value = false
   
   if (result.success) {
-    toastStore.success(`เพิ่ม ${product.value.name} ลงตะกร้าแล้ว`)
+    const variantName = selectedVariantObj.value ? ` (${selectedVariantObj.value.name})` : ''
+    toastStore.success(`เพิ่ม ${product.value.name}${variantName} ลงตะกร้าแล้ว`)
   } else {
     toastStore.error(result.error || 'ไม่สามารถเพิ่มสินค้าได้')
   }
@@ -160,7 +197,7 @@ watch(() => route.params.id, (id) => {
 
 watch(product, (p) => {
   if (p?.variants?.length > 0) {
-    selectedVariant.value = p.variants[0]
+    selectedVariantIndex.value = 0
   }
 })
 </script>
@@ -266,6 +303,20 @@ watch(product, (p) => {
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 80px;
+}
+
+.variant-btn .variant-name {
+  font-weight: 500;
+}
+
+.variant-btn .variant-price {
+  font-size: var(--font-size-xs);
+  color: var(--color-accent);
 }
 
 .variant-btn:hover {
@@ -276,6 +327,17 @@ watch(product, (p) => {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: white;
+}
+
+.variant-btn.active .variant-price {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.variant-name-badge {
+  font-size: var(--font-size-sm);
+  font-weight: normal;
+  color: var(--text-secondary);
+  margin-left: var(--space-sm);
 }
 
 .product-quantity {

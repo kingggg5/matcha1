@@ -1,5 +1,5 @@
 {
-    "name": "matcha-shop-backend",
+    "name": "matcha/backend",
     "description": "Matcha Shop Backend API",
     "type": "project",
     "require": {

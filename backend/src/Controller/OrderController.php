@@ -164,7 +164,7 @@ class OrderController
             return ['data' => ['error' => 'รองรับไฟล์ JPG, PNG, WEBP เท่านั้น'], 'status' => 400];
         }
 
-        $uploadDir = __DIR__ . '/../../uploads/slips/';
+        $uploadDir = __DIR__ . '/../../public/uploads/slips/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }

@@ -21,8 +21,8 @@
             
             <div class="cart-item-details">
               <h3 class="cart-item-name">{{ item.product?.name || 'สินค้า' }}</h3>
-              <p v-if="item.variant" class="cart-item-variant text-secondary">{{ item.variant }}</p>
-              <p class="cart-item-price text-accent">฿{{ formatPrice(item.product?.price || 0) }}</p>
+              <p v-if="getVariantName(item)" class="cart-item-variant text-secondary">{{ getVariantName(item) }}</p>
+              <p class="cart-item-price text-accent">฿{{ formatPrice(getItemPrice(item)) }}</p>
             </div>
 
             <div class="cart-item-quantity">
@@ -32,7 +32,7 @@
             </div>
 
             <div class="cart-item-total">
-              ฿{{ formatPrice((item.product?.price || 0) * item.quantity) }}
+              ฿{{ formatPrice(getItemPrice(item) * item.quantity) }}
             </div>
 
             <button class="cart-item-remove" @click="removeItem(item.id)">✕</button>
@@ -60,7 +60,7 @@
                 type="text" 
                 v-model="couponCode" 
                 class="form-input"
-                placeholder="รหัสคูปอง"
+                placeholder="รหัสส่วนลด"
                 :disabled="appliedCoupon"
               />
               <button 
@@ -148,6 +148,19 @@ const grandTotal = computed(() => Math.max(0, subtotal.value - discount.value))
 
 function formatPrice(price) {
   return new Intl.NumberFormat('th-TH').format(price)
+}
+
+function getVariantName(item) {
+  if (!item.variant) return null
+  if (typeof item.variant === 'object') return item.variant.name
+  return item.variant
+}
+
+function getItemPrice(item) {
+  if (item.variant && typeof item.variant === 'object' && item.variant.price) {
+    return item.variant.price
+  }
+  return item.product?.price || 0
 }
 
 function getImageUrl(product) {
@@ -381,6 +394,7 @@ onMounted(() => {
 
 .coupon-input-row .form-input {
   flex: 1;
+  min-width: 140px;
 }
 
 .coupon-error {

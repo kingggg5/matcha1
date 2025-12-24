@@ -64,8 +64,13 @@
             <td class="text-muted">{{ formatDate(order.createdAt) }}</td>
             <td>
               <div class="table-actions">
-                <button class="action-btn view" @click="viewOrder(order)" title="ดูรายละเอียด">
-                  👁️
+                <button 
+                  v-if="order.paymentSlip" 
+                  class="action-btn slip" 
+                  @click="viewSlip(order)" 
+                  title="ดูสลิป"
+                >
+                  📄
                 </button>
                 <select 
                   class="status-select"
@@ -122,11 +127,25 @@
               <span class="text-accent">฿{{ formatPrice(selectedOrder.total) }}</span>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
 
-          <div v-if="selectedOrder.paymentSlip" class="detail-section">
-            <h4>สลิปการโอนเงิน</h4>
-            <img :src="getSlipUrl(selectedOrder.paymentSlip)" class="slip-image" />
-          </div>
+    <!-- Slip Modal -->
+    <div v-if="slipModal && selectedSlipOrder" class="modal-overlay" @click="closeSlipModal">
+      <div class="modal-content card slip-modal" @click.stop>
+        <div class="modal-header">
+          <h3>หลักฐานการโอนเงิน #{{ selectedSlipOrder.id.slice(-6).toUpperCase() }}</h3>
+          <button class="modal-close" @click="closeSlipModal">✕</button>
+        </div>
+        <div class="order-info-compact">
+          <p><strong>ชื่อ:</strong> {{ selectedSlipOrder.customerName }}</p>
+          <p><strong>เบอร์:</strong> {{ selectedSlipOrder.customerPhone }}</p>
+          <p><strong>ที่อยู่:</strong> {{ selectedSlipOrder.shippingAddress }}</p>
+          <p><strong>ยอดรวม:</strong> <span class="text-accent">฿{{ formatPrice(selectedSlipOrder.total) }}</span></p>
+        </div>
+        <div class="slip-view">
+          <img :src="getSlipUrl(selectedSlipOrder.paymentSlip)" class="slip-image-full" />
         </div>
       </div>
     </div>
@@ -143,6 +162,8 @@ const toastStore = useToastStore()
 
 const statusFilter = ref('')
 const selectedOrder = ref(null)
+const slipModal = ref(false)
+const selectedSlipOrder = ref(null)
 
 const statusOptions = [
   { value: 'pending', label: 'รอชำระ' },
@@ -186,6 +207,16 @@ function getSlipUrl(slip) {
 
 function viewOrder(order) {
   selectedOrder.value = order
+}
+
+function viewSlip(order) {
+  selectedSlipOrder.value = order
+  slipModal.value = true
+}
+
+function closeSlipModal() {
+  slipModal.value = false
+  selectedSlipOrder.value = null
 }
 
 async function updateStatus(orderId, status) {
@@ -288,12 +319,12 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.status-badge.pending { background: #fef3c7; color: #92400e; }
-.status-badge.paid { background: #dbeafe; color: #1e40af; }
-.status-badge.confirmed { background: #d1fae5; color: #065f46; }
-.status-badge.shipped { background: #e0e7ff; color: #3730a3; }
-.status-badge.completed { background: #d1fae5; color: #047857; }
-.status-badge.cancelled { background: #fee2e2; color: #991b1b; }
+.status-badge.pending { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.status-badge.paid { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+.status-badge.confirmed { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.status-badge.shipped { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+.status-badge.completed { background: rgba(45, 90, 39, 0.2); color: var(--color-accent); border: 1px solid var(--color-primary); }
+.status-badge.cancelled { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
 
 .table-actions {
   display: flex;
@@ -316,12 +347,25 @@ onMounted(() => {
 }
 
 .status-select {
-  padding: 4px 8px;
+  padding: 6px 12px;
   background: var(--bg-glass);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.status-select:hover {
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.status-select option {
+  background: #1a1a1a;
+  color: white;
 }
 
 .modal-overlay {
@@ -386,8 +430,37 @@ onMounted(() => {
   border-top: 1px solid var(--border-subtle);
 }
 
-.slip-image {
-  max-width: 100%;
+.slip-modal {
+  max-width: 600px;
+  text-align: center;
+}
+
+.order-info-compact {
+  padding: var(--space-md);
+  background: var(--bg-glass);
   border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  text-align: left;
+}
+
+.order-info-compact p {
+  margin: var(--space-xs) 0;
+  font-size: var(--font-size-sm);
+}
+
+.slip-view {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-md);
+  background: var(--bg-glass);
+  border-radius: var(--radius-md);
+}
+
+.slip-image-full {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
 }
 </style>

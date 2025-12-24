@@ -14,21 +14,37 @@ export const useCartStore = defineStore('cart', () => {
 
     const totalPrice = computed(() => {
         return items.value.reduce((total, item) => {
-            const price = item.product?.price || 0
+            // Use variant price if available, otherwise use product price
+            let price = item.product?.price || 0
+            if (item.variant && typeof item.variant === 'object' && item.variant.price) {
+                price = item.variant.price
+            }
             return total + (price * item.quantity)
         }, 0)
     })
 
     // Load cart from localStorage for guests
     function loadLocalCart() {
-        const saved = localStorage.getItem('cart')
-        if (saved) {
-            items.value = JSON.parse(saved)
+        try {
+            const saved = localStorage.getItem('matchaking_cart')
+            if (saved) {
+                const parsed = JSON.parse(saved)
+                if (Array.isArray(parsed)) {
+                    items.value = parsed
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load cart from localStorage:', e)
+            localStorage.removeItem('matchaking_cart')
         }
     }
 
     function saveLocalCart() {
-        localStorage.setItem('cart', JSON.stringify(items.value))
+        try {
+            localStorage.setItem('matchaking_cart', JSON.stringify(items.value))
+        } catch (e) {
+            console.error('Failed to save cart to localStorage:', e)
+        }
     }
 
     async function fetchCart() {
@@ -53,14 +69,20 @@ export const useCartStore = defineStore('cart', () => {
         }
     }
 
-    async function addItem(product, quantity = 1, variant = '') {
+    async function addItem(product, quantity = 1, variant = null) {
         const authStore = useAuthStore()
+
+        // Get variant name for comparison
+        const variantName = variant && typeof variant === 'object' ? variant.name : variant
 
         if (!authStore.isAuthenticated) {
             // Handle local cart for guests
-            const existingIndex = items.value.findIndex(
-                item => item.productId === product.id && item.variant === variant
-            )
+            const existingIndex = items.value.findIndex(item => {
+                const itemVariantName = item.variant && typeof item.variant === 'object'
+                    ? item.variant.name
+                    : item.variant
+                return item.productId === product.id && itemVariantName === variantName
+            })
 
             if (existingIndex !== -1) {
                 items.value[existingIndex].quantity += quantity

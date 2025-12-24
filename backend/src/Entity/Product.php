@@ -67,7 +67,7 @@ class Product
         if (!is_array($variants)) {
             $variants = [];
         }
-        
+
         $product = new self(
             $doc['name'],
             $doc['description'] ?? '',
@@ -79,9 +79,23 @@ class Product
             (float) ($doc['priceMax'] ?? $doc['price'] ?? 0),
             (string) $doc['_id']
         );
-        $product->createdAt = $doc['createdAt'] ?? date('Y-m-d H:i:s');
-        $product->updatedAt = $doc['updatedAt'] ?? date('Y-m-d H:i:s');
+        $product->createdAt = self::convertDate($doc['createdAt'] ?? null);
+        $product->updatedAt = self::convertDate($doc['updatedAt'] ?? null);
         return $product;
+    }
+
+    private static function convertDate($date): string
+    {
+        if ($date === null) {
+            return date('Y-m-d H:i:s');
+        }
+        if ($date instanceof \MongoDB\BSON\UTCDateTime) {
+            return $date->toDateTime()->format('Y-m-d H:i:s');
+        }
+        if (is_string($date)) {
+            return $date;
+        }
+        return date('Y-m-d H:i:s');
     }
 
     public function toPublicArray(): array

@@ -59,7 +59,7 @@ npm run dev
 ### Admin Login
 
 ```
-Email: admin@matchazuki.com
+Email: admin@matchaking.com
 Password: admin123
 ```
 

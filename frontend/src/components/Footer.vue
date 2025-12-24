@@ -6,7 +6,7 @@
         <div class="footer-brand">
           <div class="footer-logo">
             <span class="logo-icon">🍵</span>
-            <span class="logo-text">MATCHA<span class="text-accent">ZUKI</span></span>
+            <span class="logo-text">MATCHA<span class="text-accent">KING</span></span>
           </div>
           <p class="footer-desc">
             Premium Japanese Matcha สินค้ามัทฉะคุณภาพสูง นำเข้าจากประเทศญี่ปุ่น
@@ -42,7 +42,7 @@
         <div class="footer-section">
           <h4 class="footer-title">ติดต่อเรา</h4>
           <ul class="footer-contact">
-            <li>📧 hello@matchazuki.com</li>
+            <li>📧 hello@matchaking.com</li>
             <li>📞 02-XXX-XXXX</li>
             <li>📍 กรุงเทพมหานคร</li>
           </ul>
@@ -50,7 +50,7 @@
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; 2024 Matchazuki. All rights reserved.</p>
+        <p>&copy; 2024 Matchaking. All rights reserved.</p>
         <p class="footer-credit">Crafted with 💚 for matcha lovers</p>
       </div>
     </div>
