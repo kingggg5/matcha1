@@ -39,17 +39,24 @@
             ฿{{ formatPrice(priceRange.min) }}
           </template>
         </div>
-
-        <!-- Add to Cart Button -->
-        <button 
-          class="btn btn-primary btn-sm add-to-cart-btn"
-          :class="{ disabled: !product.inStock }"
-          @click.stop="handleAddToCart"
-          :disabled="loading || !product.inStock"
+        
+        <span 
+          class="product-card-stock" 
+          :class="product.inStock ? 'in-stock' : 'out-of-stock'"
         >
-          {{ loading ? '...' : (product.inStock ? 'เพิ่มลงตะกร้า' : 'หมด') }}
-        </button>
+          {{ product.inStock ? 'มีสินค้า' : 'สินค้าหมด' }}
+        </span>
       </div>
+
+      <!-- Add to Cart Button -->
+      <button 
+        class="btn btn-primary btn-sm add-to-cart-btn"
+        :class="{ disabled: !product.inStock }"
+        @click.stop="handleAddToCart"
+        :disabled="loading || !product.inStock"
+      >
+        {{ loading ? 'กำลังเพิ่ม...' : (product.inStock ? 'เพิ่มลงตะกร้า' : 'สินค้าหมด') }}
+      </button>
     </div>
   </div>
 </template>
@@ -205,22 +212,12 @@ async function toggleWishlist() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-sm);
-  margin-top: auto;
-  padding-top: var(--space-sm);
-}
-
-.product-card-price {
-  font-weight: 600;
-  color: var(--color-accent);
-  font-size: var(--font-size-sm);
-  white-space: nowrap;
+  margin-bottom: var(--space-md);
 }
 
 .add-to-cart-btn {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: var(--font-size-xs);
-  white-space: nowrap;
+  width: 100%;
+  margin-top: auto;
 }
 
 .add-to-cart-btn.disabled {
@@ -231,6 +228,6 @@ async function toggleWishlist() {
 }
 
 .price-range {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
 }
 </style>

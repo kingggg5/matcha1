@@ -159,7 +159,7 @@ $productData = [
             ['name' => 'Premium Set', 'price' => 2490]
         ],
         'inStock' => true,
-        'image' => 'https://images.unsplash.com/photo-1556679343-c1306c46e7d1?w=600&h=600&fit=crop&q=90'
+        'image' => 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&h=600&fit=crop&q=90'
     ],
     [
         'name' => 'Matcha Cold Brew',
